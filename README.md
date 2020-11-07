@@ -1,2 +1,1 @@
-# bitt
-Bank Infrastructure Testing tool
+# Bank Infrastructure Testing tool
