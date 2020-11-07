@@ -1,1 +1,28 @@
+Name: epay
+Fields:
+  - MTI: Messege Type
+  
+Dicts:
+ - MTI:
+    - 0100: Authorization Request
+    - 0110: Authorization Response
+    - 0200: Financial Transaction Request
+    - 0210: Financial Transaction Response
+    - 0220: Financial Transaction Advice
+    - 0221: Financial Transaction Advice Repeat
+    - 0230: Financial Transaction Advice Response
+    - 0303: SMS / E-Mail Notification
+    - 0360: Service Transaction Request
+    - 0370: Service Transaction Response
+    - 0400: Reversal Request
+    - 0401: Reversal Repeat
+    - 0410: Reversal Response
+    - 0420: Reversal Advice
+    - 0421: Reversal Advice Repeat
+    - 0430: Reversal Advice Response
+    - 0520: Settlement Request
+    - 0521: Settlement Request Repeat
+    - 0530: Settlement Request Response
+    - 0800: Network Management Request
+    - 0810: Network Management Response
 
