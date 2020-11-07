@@ -3,7 +3,7 @@ Fields:
   - MTI: Messege Type
   
 Dicts:
- - MTI:
+ - MTI:  # 0xxx: ISO 8583-1:1987
     - 0100: Authorization Request
     - 0110: Authorization Response
     - 0200: Financial Transaction Request
