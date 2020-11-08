@@ -10,11 +10,19 @@ class Config(object):
         super().__init__()
         if not os.path.exists(config):
             print("Can't find configuration file.")
-        self.config = yaml.load(open(config))
-        fields = {}
-        for field in self.config['Fields']:
+        self.raw_config = yaml.load(open(config))
+        self.__init_mti()
+        self.__init_fields()
+    
+    def __init_mti(self):
+        mti = self.raw_config.get("MTI", dict(Type="ASCII", Length=8))
+        MTI = namedtuple("MTI", mti)
+        self.mti = MTI(**mti)
+
+    def __init_fields(self):
+        self.fields = {}
+        for field in self.raw_config['Fields']:
             if isinstance(field, tuple):
-                fields[field[0]]=Field(*field)
+                self.fields[field[0]]=Field(*field)
             else:
                 print("Unexpected field format:", field)
-        self.config['Fields'] = fields
