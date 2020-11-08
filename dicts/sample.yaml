@@ -1,10 +1,11 @@
 Name: example
 MTI:
   Type: ASCII
-  Size: 4
-Bitmap:
-  Size: 8
+  Length: 4
+# Bitmap:
+  # Length: 8
 Fields:
+  - !!python/tuple [1, b, 8, FIXED, Bitmap]
   - !!python/tuple [2, n, 19, LLVAR, Primary account number (PAN)]
   - !!python/tuple [3, n, 6, FIXED, Processing code]
   - !!python/tuple [4, n, 12, FIXED, Amount transaction]
