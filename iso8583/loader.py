@@ -10,6 +10,7 @@ class Config(object):
         super().__init__()
         if not os.path.exists(config):
             print("Can't find configuration file.")
+            return
         self.raw_config = yaml.load(open(config))
         self.__init_mti()
         self.__init_fields()
