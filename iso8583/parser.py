@@ -8,3 +8,6 @@ class ISO8583Parser(object):
     
     def __getMTI(self, msg):
         return msg[0:self.__cfg.mti.Length], self.__cfg.mti.Length
+
+    def __getBitmap(self, msg, position):
+        BitmapFieldID = 1  # TODO: move?
