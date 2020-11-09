@@ -9,6 +9,7 @@ msg2 =  bytes.fromhex('30323030F234000008C08000000000000400000031363430303030313
 
 parser = ISO8583Parser('dicts/sample.yaml')
 # print(cfg.fields)
-# print(msg)
+print(msg)
 pprint(parser.parse(msg))
+print(msg2)
 pprint(parser.parse(msg2))
