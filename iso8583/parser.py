@@ -24,10 +24,10 @@ class ISO8583Parser(object):
         bits = [flags[i//8] & 1 << (7 - i)%8 != 0 for i in range(len(flags) * 8)]
 
         bitmap = [ i + ext + 1 for i, b in enumerate(bits) if b ]
-        if 1 in bitmap:
+        if self.BitmapFieldID in bitmap:
             ext_bitmap, end_position = self._getBitmap(msg, position=end_position, ext=64)
             bitmap += ext_bitmap
-            bitmap.pop(0)
+            bitmap.pop(0)  # Delete BitMapID parsing task
         return bitmap, end_position
     
     def _getFields(self, msg, position=None):
