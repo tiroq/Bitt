@@ -23,7 +23,13 @@ class Config(object):
     def __init_fields(self):
         self.fields = {}
         for field in self.raw_config['Fields']:
-            if isinstance(field, tuple):
+            if isinstance(field, list):
+                field[3] = {
+                    'LLLVAR': 3,
+                    'LLVAR' : 2,
+                    'LVAR'  : 1,
+                    'FIXED' : 0
+                }[field[3]]
                 self.fields[field[0]]=Field(*field)
             else:
                 print("Unexpected field format:", field)
