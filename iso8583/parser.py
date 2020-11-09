@@ -20,6 +20,7 @@ class ISO8583Parser(object):
         end_position = position + self.__cfg.fields[self.BitmapFieldID].MaxLen
         flags = msg[position:end_position]
         # Make Bitmap
+        # bits = [(flags[i//8] >> (7-i)%8) & 1 for i in range(len(flags) * 8)] # TODO: check performance with next line
         bits = [flags[i//8] & 1 << (7 - i)%8 != 0 for i in range(len(flags) * 8)]
 
         bitmap = [ i + 1 for i, b in enumerate(bits) if b ]
