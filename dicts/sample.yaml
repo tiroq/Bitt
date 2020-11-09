@@ -94,7 +94,7 @@ Fields:
   - [87, n, 16, FIXED, Credits reversal amount]
   - [88, n, 16, FIXED, Debits amount]
   - [89, n, 16, FIXED, Debits reversal amount]
-  - [90, n, 42, FIXED, Original data elements]
+  - [90, n, 20, FIXED, Original data elements]
   - [91, an, 1, FIXED, File update code]
   - [92, an, 2, FIXED, File security code]
   - [93, an, 5, FIXED, Response indicator]
