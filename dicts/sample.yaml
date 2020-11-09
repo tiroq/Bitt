@@ -94,7 +94,12 @@ Fields:
   - [87, n, 16, FIXED, Credits reversal amount]
   - [88, n, 16, FIXED, Debits amount]
   - [89, n, 16, FIXED, Debits reversal amount]
-  - [90, n, 20, FIXED, Original data elements]
+  # - [90, n, 20, FIXED, Original data elements]
+  - ID: 90
+    Fields:
+      - [90.1, n, 4, FIXED, Original MTI]
+      - [90.2, n, 6, FIXED, Original STAN]
+      - [90.3, n, 10, FIXED, Original transmission date & time]
   - [91, an, 1, FIXED, File update code]
   - [92, an, 2, FIXED, File security code]
   - [93, an, 5, FIXED, Response indicator]
