@@ -14,7 +14,7 @@ class ISO8583Parser(object):
     def _getMTI(self, msg):
         return msg[0:self.__cfg.mti.Length].decode("utf-8")
 
-    def _getBitmap(self, msg, position=None):
+    def _getBitmap(self, msg, position=None, ext=0):
         if position is None:
             position = self.__cfg.mti.Length
         end_position = position + self.__cfg.fields[self.BitmapFieldID].MaxLen
@@ -23,14 +23,18 @@ class ISO8583Parser(object):
         # bits = [(flags[i//8] >> (7-i)%8) & 1 for i in range(len(flags) * 8)] # TODO: check performance with next line
         bits = [flags[i//8] & 1 << (7 - i)%8 != 0 for i in range(len(flags) * 8)]
 
-        bitmap = [ i + 1 for i, b in enumerate(bits) if b ]
-        return bitmap
+        bitmap = [ i + ext + 1 for i, b in enumerate(bits) if b ]
+        if 1 in bitmap:
+            ext_bitmap, end_position = self._getBitmap(msg, position=end_position, ext=64)
+            bitmap += ext_bitmap
+            bitmap.pop(0)
+        return bitmap, end_position
     
     def _getFields(self, msg, position=None):
         _msg = msg[::]
-        if position is None:
-            position = self.__cfg.mti.Length + self.__cfg.fields[self.BitmapFieldID].MaxLen
-        bitmap = self._getBitmap(_msg)
+        # if position is None:
+        #     position = self.__cfg.mti.Length + self.__cfg.fields[self.BitmapFieldID].MaxLen
+        bitmap, position = self._getBitmap(_msg)
         _msg = _msg[position:]
         fields = []
         for fieldID in bitmap:
