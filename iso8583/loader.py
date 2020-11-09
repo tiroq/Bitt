@@ -2,14 +2,15 @@ import os
 import yaml
 
 from collections import namedtuple
+from .logger import Logger
 
 Field = namedtuple("Field", ["FieldID", "Type", "MaxLen", "LenType", "Description"])
 
 class Config(object):
-    def __init__(self, config):
-        super().__init__()
+    def __init__(self, config, logger=None):
+        self.log = Logger()
         if not os.path.exists(config):
-            print("Can't find configuration file.")
+            self.log.Error("Can't find configuration file.")
             return
         self.raw_config = yaml.load(open(config))
         self.__init_mti()
@@ -32,4 +33,6 @@ class Config(object):
                 }[field[3]]
                 self.fields[field[0]]=Field(*field)
             else:
-                print("Unexpected field format:", field)
+                self.log.Info("Unexpected field format:", field)
+        # self.log.debug(f"Loaded config: {self.fields}")
+        
