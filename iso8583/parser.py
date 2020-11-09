@@ -20,11 +20,7 @@ class ISO8583Parser(object):
         end_position = position + self.__cfg.fields[self.BitmapFieldID].MaxLen
         flags = msg[position:end_position]
         # Make Bitmap
-        _bits = [flags[i//8] & 1 << i%8 != 0 for i in range(len(flags) * 8)]
-        # change order of bits foreach byte
-        bits = []
-        for i in range(int(len(_bits)/8)):
-            bits += _bits[i*8:i*8+8][::-1] 
+        bits = [flags[i//8] & 1 << (7 - i)%8 != 0 for i in range(len(flags) * 8)]
 
         bitmap = [ i + 1 for i, b in enumerate(bits) if b ]
         return bitmap
@@ -46,5 +42,5 @@ class ISO8583Parser(object):
                 data = _msg[rule.LenType:rule.LenType + length]
                 _msg = _msg[rule.LenType + length:]
             data = repr(data.decode("utf-8"))
-            fields.append(fieldID, data)
+            fields.append((fieldID, data))
         return fields
