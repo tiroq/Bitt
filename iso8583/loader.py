@@ -6,6 +6,21 @@ from .logger import Logger
 
 Field = namedtuple("Field", ["FieldID", "Type", "MaxLen", "LenType", "Description"])
 
+class SField(object):
+    def __init__(self, data):
+        self.ID = data["ID"]
+        self.Fields = [self.convert(field) for field in data["Fields"]]
+    
+    def convert(self, field):
+        field[3] = {
+            'LLLVAR': 3,
+            'LLVAR' : 2,
+            'LVAR'  : 1,
+            'FIXED' : 0
+        }[field[3]]
+        return Field(*field)
+
+
 class Config(object):
     def __init__(self, config, logger=None):
         self.log = Logger()
@@ -32,6 +47,8 @@ class Config(object):
                     'FIXED' : 0
                 }[field[3]]
                 self.fields[field[0]]=Field(*field)
+            elif isinstance(field, dict):
+                self.fields[field["ID"]] = SField(field)
             else:
                 self.log.Info("Unexpected field format:", field)
         # self.log.debug(f"Loaded config: {self.fields}")
