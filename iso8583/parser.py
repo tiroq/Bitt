@@ -80,16 +80,32 @@ class ISO8583Parser(object):
         for fieldID in bitmap:
             rule = self.__cfg.fields[fieldID]
             self.log.Debug(f"Loaded rule: {rule}")
-            if rule.LenType == 0:
-                data = _msg[:rule.MaxLen]
-                self.log.Debug(f"RAW {fieldID:>3}:\n{self.hexdump(data)}")
-                _msg = _msg[rule.MaxLen:]
-            else:
-                length = int(_msg[:rule.LenType])
-                data = _msg[rule.LenType:rule.LenType + length]
-                self.log.Debug(f"RAW {fieldID:>3}:\n{self.hexdump(_msg[:rule.LenType + length])}")
-                _msg = _msg[rule.LenType + length:]
-            data = repr(data.decode("utf-8"))
+            _msg, data = {
+                "Field": self.__getFieldValue
+            ,   "SField": self.__getSFieldValue
+            }[type(rule).__name__](_msg, rule)
             self.log.Info(f"{fieldID:>3} = {data}")
             fields.append((fieldID, data))
         return fields
+
+    def __getFieldValue(self, msg, rule):
+        if rule.LenType == 0:
+            data = msg[:rule.MaxLen]
+            self.log.Debug(f"RAW {rule.FieldID:>3}:\n{self.hexdump(data)}")
+            msg = msg[rule.MaxLen:]
+        else:
+            length = int(msg[:rule.LenType])
+            data = msg[rule.LenType:rule.LenType + length]
+            self.log.Debug(f"RAW {rule.FieldID:>3}:\n{self.hexdump(msg[:rule.LenType + length])}")
+            msg = msg[rule.LenType + length:]
+        data = repr(data.decode("utf-8"))
+        return msg, data
+
+    def __getSFieldValue(self, msg, rule):
+        data = []
+        for field_rule in rule.Fields:
+            _data = msg[:field_rule.MaxLen]
+            self.log.Debug(f"RAW {field_rule.FieldID:>3}:\n{self.hexdump(_data)}")
+            data.append((field_rule.FieldID, repr(_data.decode("utf-8"))))
+            msg = msg[field_rule.MaxLen:]
+        return msg, data
