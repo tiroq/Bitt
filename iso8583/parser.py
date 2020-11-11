@@ -104,8 +104,6 @@ class ISO8583Parser(object):
     def __getSFieldValue(self, msg, rule):
         data = []
         for field_rule in rule.Fields:
-            _data = msg[:field_rule.MaxLen]
-            self.log.Debug(f"RAW {field_rule.FieldID:>3}:\n{self.hexdump(_data)}")
-            data.append((field_rule.FieldID, repr(_data.decode("utf-8"))))
-            msg = msg[field_rule.MaxLen:]
+            msg, _data = self.__getFieldValue(msg, field_rule)
+            data.append((field_rule.FieldID, _data))
         return msg, data
