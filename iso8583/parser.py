@@ -68,10 +68,8 @@ class ISO8583Parser(object):
             bitmap.pop(0)  # Delete BitMapID parsing task
         return bitmap, end_position
     
-    def _getFields(self, msg, position=None):
+    def _getFields(self, msg):
         _msg = msg[::]
-        # if position is None:
-        #     position = self.__cfg.mti.Length + self.__cfg.fields[self.BitmapFieldID].MaxLen
         bitmap, position = self._getBitmap(_msg)
         self.log.Debug(f"RAW Bitmap:\n{self.hexdump(_msg[:position])}")
         self.log.Debug(f"Bitmap: {bitmap}")
@@ -79,15 +77,18 @@ class ISO8583Parser(object):
         fields = []
         for fieldID in bitmap:
             rule = self.__cfg.fields[fieldID]
-            self.log.Debug(f"Loaded rule: {rule}")
-            _msg, data = {
-                "Field": self.__getFieldValue
-            ,   "SField": self.__getSFieldValue
-            }[type(rule).__name__](_msg, rule)
+            _msg, data = self.__parseField(_msg, rule)
             self.log.Info(f"{fieldID:>3} = {data}")
             fields.append((fieldID, data))
         return fields
-
+    
+    def __parseField(self, msg, rule):
+        self.log.Debug(f"Loaded rule: {rule}")
+        return {
+                "Field": self.__getFieldValue
+            ,   "SField": self.__getSFieldValue
+            }[type(rule).__name__](msg, rule)
+    
     def __getFieldValue(self, msg, rule):
         if rule.LenType == 0:
             data = msg[:rule.MaxLen]
@@ -104,6 +105,6 @@ class ISO8583Parser(object):
     def __getSFieldValue(self, msg, rule):
         data = []
         for field_rule in rule.Fields:
-            msg, _data = self.__getFieldValue(msg, field_rule)
+            msg, _data = self.__parseField(msg, field_rule)
             data.append((field_rule.FieldID, _data))
         return msg, data
