@@ -1,4 +1,7 @@
 Name: example
+Header:
+  Type: GENERIC
+  Encoding: C
 MTI:
   Type: ASCII
   Length: 4
