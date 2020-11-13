@@ -3,6 +3,20 @@ from pprint import pprint
 
 # from iso8583.loader import Config
 from iso8583.parser import ISO8583Parser
+from iso8583.builder import ISO8583Builder
+from iso8583.message import Message
+
+imsg = [(2, "4000010000000001"),
+  (3, "840000"),
+  (4, "000000001000"),
+  (7, "1106140117"),
+  (11, "334748"),
+  (12, "201106140117"),
+  (14, "2512"),
+  (37, "031114334748"),
+  (41, "00999201"),
+  (42, "M999201"),
+  (49, "810")]
 
 msgs = [
     bytes.fromhex('303230307234000008C08000313634303030303130303030303030303031383430303030303030303030303031303030313130363134303131373333343734383230313130363134303131373235313230333131313433333437343830303939393230314D3939393230312020202020202020383130')
@@ -14,3 +28,12 @@ parser = ISO8583Parser('dicts/sample.yaml')
 for msg in msgs:
     print(msg)
     pprint(parser.parse(msg))
+    break
+
+m = Message(200, 'dicts/sample.yaml')
+for i, v in imsg:
+    m[i] = v
+
+b = ISO8583Builder('dicts/sample.yaml')
+raw = b.build(m)
+print(raw)

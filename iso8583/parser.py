@@ -1,43 +1,8 @@
-import logging
+from .base import ISO8583
 
-from .loader import Config
-from .logger import Logger
-
-class ISO8583Parser(object):
-    BitmapFieldID = 1
-
+class ISO8583Parser(ISO8583):
     def __init__(self, config):
-        self.__cfg = Config(config)
-        self.log = Logger()
-    
-    def ordp(self, c):
-        output = []
-        for i in c:
-            if (i < 32) or (i >= 127):
-                output.append('.')
-            else:
-                output.append(chr(i))
-        return ''.join(output)
-
-    def hexdump(self, p):
-        output = []
-        l = len(p)
-        i = 0
-        while i < l:
-            output.append('{:04d}   '.format(i))
-            for j in range(16):
-                if (i + j) < l:
-                    byte = p[i + j]
-                    output.append('{:02X} '.format(byte))
-                else:
-                    output.append('   ')
-                if (j % 16) == 7:
-                    output.append(' ')
-            output.append('  ')
-            output.append(self.ordp(p[i:i + 16]))
-            output.append('\n')
-            i += 16
-        return ''.join(output).rstrip('\n')
+        super().__init__(config)
     
     def parse(self, msg):
         self.log.Debug(f"Start parsing message:\n{self.hexdump(msg)}")
@@ -46,15 +11,15 @@ class ISO8583Parser(object):
         return mti, fields
     
     def _getMTI(self, msg):
-        raw_mti = msg[0:self.__cfg.mti.Length] 
+        raw_mti = msg[0:self.cfg.mti.Length] 
         mti = raw_mti.decode("utf-8")
         self.log.Debug(f"MTI:\n{self.hexdump(raw_mti)}")
         return mti
 
     def _getBitmap(self, msg, position=None):
         if position is None:
-            position = self.__cfg.mti.Length
-        end_position = position + self.__cfg.fields[self.BitmapFieldID].MaxLen
+            position = self.cfg.mti.Length
+        end_position = position + self.cfg.fields[self.BitmapFieldID].MaxLen
         flags = msg[position:end_position]
         # Make Bitmap
         # bits = [(flags[i//8] >> (7-i)%8) & 1 for i in range(len(flags) * 8)] # TODO: check performance with next line
@@ -76,7 +41,7 @@ class ISO8583Parser(object):
         _msg = _msg[position:]
         fields = []
         for fieldID in bitmap:
-            rule = self.__cfg.fields[fieldID]
+            rule = self.cfg.fields[fieldID]
             _msg, data = self.__parseField(_msg, rule)
             self.log.Info(f"{fieldID:>3} = {data}")
             fields.append((fieldID, data))
