@@ -8,9 +8,12 @@ from pprint import pprint
 Field = namedtuple("Field", ["FieldID", "Type", "MaxLen", "LenType", "Description"])
 
 class SField(object):
+    _fields = {}
     def __init__(self, data):
         self.ID = data["ID"]
         self.Fields = [self.convert(field) for field in data["Fields"]]
+        for i in self.Fields:
+            self._fields[i.FieldID] = i
     
     def convert(self, field):
         field[3] = {
@@ -20,6 +23,10 @@ class SField(object):
             'FIXED' : 0
         }[field[3]]
         return Field(*field)
+    
+    def __getitem__(self, key):
+        return self._fields.get(key)
+
 
 class Fields(object):
     _fields = {}
@@ -30,7 +37,7 @@ class Fields(object):
         return self._fields.get(key)
 
 class Config(object):
-    _msgs = {}
+    _fields = {}
     def __init__(self, config, logger=None):
         self.log = Logger()
         if not os.path.exists(config):
@@ -38,27 +45,21 @@ class Config(object):
             return
         self.raw_config = yaml.load(open(config))
         self.__init_mti()
-        self.__init_msgs()
-        # self.__init_fields()
+        self.__init_fields()
     
     def __getitem__(self, key):
         if isinstance(key, bytes):
             key = key.decode('utf-8')
-        return self._msgs[key]
+        return self._fields[key]
     
     def __init_mti(self):
         mti = self.raw_config.get("MTI", dict(Type="ASCII", Length=8))
         MTI = namedtuple("MTI", mti)
         self.mti = MTI(**mti)
     
-    def __init_msgs(self):
-        for msg in self.raw_config.get("Messages", []):
-            self.__init_fields(msg)
-
-    def __init_fields(self, msg):
-        mti = msg.get('MTI')
+    def __init_fields(self):
         fields = {}
-        for field in msg['Fields']:
+        for field in self.raw_config['Fields']:
             if isinstance(field, list):
                 field[3] = {
                     'LLLVAR': 3,
@@ -66,11 +67,10 @@ class Config(object):
                     'LVAR'  : 1,
                     'FIXED' : 0
                 }[field[3]]
-                fields[field[0]]=Field(*field)
+                self._fields[field[0]] = Field(*field)
             elif isinstance(field, dict):
-                fields[field["ID"]] = SField(field)
+                self._fields[field["ID"]] = SField(field)
             else:
                 self.log.Info("Unexpected field format:", field)
-        self._msgs[mti] = fields
         # self.log.debug(f"Loaded config: {self.fields}")
         

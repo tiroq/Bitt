@@ -1,15 +1,19 @@
 from .base import ISO8583
+from .message import Message
 from pprint import pprint
 
 class ISO8583Parser(ISO8583):
     def __init__(self, config):
+        self._cfg_name = config
         super().__init__(config)
     
     def parse(self, msg):
         self.log.Debug(f"Start parsing message:\n{self.hexdump(msg)}")
         mti = self._getMTI(msg)
-        fields = self._getFields(mti, msg[self.cfg.mti.Length:])
-        return mti, fields
+        pmsg = Message(mti, self._cfg_name)
+        for fID, data in self._getFields(msg[self.cfg.mti.Length:]):
+            pmsg[fID] = data
+        return pmsg
     
     def _getMTI(self, msg):
         raw_mti = msg[0:self.cfg.mti.Length] 
@@ -17,8 +21,8 @@ class ISO8583Parser(ISO8583):
         self.log.Debug(f"MTI:\n{self.hexdump(raw_mti)}")
         return mti
 
-    def _getBitmap(self, msg, cfg, position=0):
-        end_position = position + cfg[self.BitmapFieldID].MaxLen
+    def _getBitmap(self, msg, position=0):
+        end_position = position + self.cfg[self.BitmapFieldID].MaxLen
         flags = msg[position:end_position]
         # Make Bitmap
         # bits = [(flags[i//8] >> (7-i)%8) & 1 for i in range(len(flags) * 8)] # TODO: check performance with next line
@@ -32,17 +36,16 @@ class ISO8583Parser(ISO8583):
             bitmap.pop(0)  # Delete BitMapID parsing task
         return bitmap, end_position
     
-    def _getFields(self, mti, msg):
+    def _getFields(self, msg):
         _msg = msg[::]
-        cfg = self.cfg[mti]
         # pprint(self.cfg._msgs)
-        bitmap, position = self._getBitmap(_msg, cfg)
+        bitmap, position = self._getBitmap(_msg)
         self.log.Debug(f"RAW Bitmap:\n{self.hexdump(_msg[:position])}")
         self.log.Debug(f"Bitmap: {bitmap}")
         _msg = _msg[position:]
         fields = []
         for fieldID in bitmap:
-            rule = cfg[fieldID]
+            rule = self.cfg[fieldID]
             _msg, data = self.__parseField(_msg, rule)
             self.log.Info(f"{fieldID:>3} = {data}")
             fields.append((fieldID, data))
@@ -65,7 +68,8 @@ class ISO8583Parser(ISO8583):
             data = msg[rule.LenType:rule.LenType + length]
             self.log.Debug(f"RAW {rule.FieldID:>3}:\n{self.hexdump(msg[:rule.LenType + length])}")
             msg = msg[rule.LenType + length:]
-        data = repr(data.decode("utf-8"))
+        data = data.decode("utf-8")
+        # data = repr(data)
         return msg, data
 
     def __getSFieldValue(self, msg, rule):
