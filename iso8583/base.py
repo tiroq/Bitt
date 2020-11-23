@@ -1,14 +1,16 @@
-from .config import Config
+from .config import DictConfig
 from .logger import Logger
+
 
 class ISO8583(object):
     BitmapFieldID = 1
 
-    def __init__(self, config):
-        self.cfg = Config(config)
+    def __init__(self, config) -> None:
+        self.cfg = DictConfig(config)
         self.log = Logger()
-    
-    def ordp(self, c):
+
+    @staticmethod
+    def ordp(c: bytes) -> str:
         output = []
         for i in c:
             if (i < 32) or (i >= 127):
@@ -17,7 +19,7 @@ class ISO8583(object):
                 output.append(chr(i))
         return ''.join(output)
 
-    def hexdump(self, p):
+    def hexdump(self, p: bytes) -> str:
         output = []
         l = len(p)
         i = 0
