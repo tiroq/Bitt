@@ -2,7 +2,7 @@ from .base import ISO8583
 from .message import Message
 from pprint import pprint
 
-class ISO8583Parser(ISO8583):
+class Parser(ISO8583):
     def __init__(self, config):
         self._cfg_name = config
         super().__init__(config)
