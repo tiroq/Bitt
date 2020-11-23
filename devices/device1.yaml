@@ -1,0 +1,8 @@
+Name: test
+Header:
+  Encoding: C  # [C|B]  Character or Binary encoding
+  Format: D    # [D|H]  Decimal or Hex format
+  ByteOrder: b # [b|l]  big or little endian byte order
+  Length: 4    # [1..9] header length
+Host: 10.7.33.226
+Port: 53117
