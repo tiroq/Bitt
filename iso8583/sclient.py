@@ -37,7 +37,8 @@ class Client(ISO8583):
             self.log.Error(f"Error while trying to establish connection: {e} ({self.cfg.host}:{self.cfg.port})")
             self.handle_connection_failure(initial=True)
             return False
-        self.sock.setblocking(0)
+        self.sock.setblocking(1)
+        # self.sock.setblocking(0)
         # Nagle algo
         if self._packet_split:
             self.sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, True)
@@ -77,6 +78,7 @@ class Client(ISO8583):
             self.handle_connection_failure()
             data = None
         # if data and self._traffic: self._traffic.write(data, out=True)
+        self.log.Debug(f"Socket read complete: {data}")
         return data
 
     def send(self, data, count=True) -> bool:

@@ -2,17 +2,20 @@
 from iso8583.config import DeviceConfig
 from iso8583.builder import CDbBuilder
 from iso8583.message import Message
-# from iso8583.sclient import Client
+from iso8583.sclient import Client
 from iso8583.parser import Parser
 
+from datetime import datetime
+import random
+f11 = f"{random.randrange(999999):06}"
 imsg = [(2, "4000010000000001"),
         (3, "840000"),
         (4, "000000001000"),
-        (7, "1106140117"),
-        (11, "334748"),
-        (12, "201106140117"),
+        (7, datetime.now().strftime("%m%d%H%M%S")),
+        (11, f11),
+        (12, datetime.now().strftime("%y%m%d%H%M%S")),
         (14, "2512"),
-        (37, "031114334748"),
+        (37, f"{random.randrange(999999999999):012}"),
         (41, "00999201"),
         (42, "M999201"),
         (49, "810")]
@@ -45,6 +48,7 @@ msgs = [
 
 # print(cfg.fields)
 for msg in msgs:
+    continue
     parser = Parser('dicts/sample.yaml')
     builder = CDbBuilder('dicts/sample.yaml')
     parsed = parser.parse(msg)
@@ -56,18 +60,27 @@ for msg in msgs:
     print("=" * 40)
 
 device_config = DeviceConfig('devices/device1.yaml')
-# c = Client(device_config)
+c = Client(device_config)
 m = Message(200, 'dicts/sample.yaml')
 for i, v in imsg:
     m[i] = v
 
-# b = CDbBuilder('dicts/sample.yaml')
-# raw = b'CDb4'
-# raw += b.build(m)
-# c.send(raw)
-# while True:
-#     msg = c.read_socket()
-#     if msg:
-#         print(msg)
-#     else:
-#         break
+b = CDbBuilder('dicts/sample.yaml')
+msg = b.build(m)
+raw = bytes("{0:04}".format(len(msg)), 'utf-8') + msg
+c.send(raw)
+print(9, raw)
+parser = Parser('dicts/sample.yaml')
+_msg = None
+while True:
+    if c.tcp_socket():
+        _msg = c.read_socket()
+        print(0, _msg)
+    if _msg:
+        print(1, _msg[4:])
+        parsed = parser.parse(_msg[4:])
+        print(parsed)
+        break
+
+    else:
+        continue
