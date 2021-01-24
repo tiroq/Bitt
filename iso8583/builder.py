@@ -2,8 +2,8 @@ from .base import ISO8583
 from .message import Message
 
 class BaseBuilder(ISO8583):
-    def __init__(self, config) -> None:
-        super().__init__(config)
+    def __init__(self, config_name) -> None:
+        super().__init__(config_name)
         self.__raw = b''
         self._buildField = None
         self._buildSField = None
@@ -30,8 +30,8 @@ class BaseBuilder(ISO8583):
 
 
 class CDbBuilder(BaseBuilder):
-    def __init__(self, config) -> None:
-        super().__init__(config)
+    def __init__(self, config_name) -> None:
+        super().__init__(config_name)
         self._buildField = self.__buildField
         self._buildSField = self.__buildSField
 

@@ -1,12 +1,12 @@
-from .config import Config
+from .config import DictConfigLoader
 from .logger import Logger
 
 class Message(object):
-    def __init__(self, mti, config):
+    def __init__(self, mti, config_name):
         self.log = Logger()
         self.mti = mti
         self._bitmap = []
-        self.config = Config(config)
+        self.config = DictConfigLoader(config_name)
         self.fields = {}
 
     @property

@@ -1,11 +1,12 @@
 from .base import ISO8583
+from .config import DictConfigLoader
 from .message import Message
 from pprint import pprint
 
 class Parser(ISO8583):
-    def __init__(self, config):
-        self._cfg_name = config
-        super().__init__(config)
+    def __init__(self, config_name):
+        self._cfg_name = config_name
+        super().__init__(config_name)
     
     def parse(self, msg):
         self.log.Debug(f"Start parsing message:\n{self.hexdump(msg)}")

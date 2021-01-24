@@ -1,12 +1,13 @@
-from .config import DictConfig
+from .config import DictConfigLoader
 from .logger import Logger
 
 
 class ISO8583(object):
     BitmapFieldID = 1
 
-    def __init__(self, config) -> None:
-        self.cfg = DictConfig(config)
+    def __init__(self, config_name) -> None:
+        # self.cfg = DictConfig(config)
+        self.cfg = DictConfigLoader(config_name)
         self.log = Logger()
 
     @staticmethod

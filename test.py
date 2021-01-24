@@ -49,8 +49,8 @@ msgs = [
 # print(cfg.fields)
 for msg in msgs:
     continue
-    parser = Parser('dicts/sample.yaml')
-    builder = CDbBuilder('dicts/sample.yaml')
+    parser = Parser('example_1')
+    builder = CDbBuilder('example_1')
     parsed = parser.parse(msg)
     new_msg = builder.build(parsed)
     print(parsed)
@@ -60,16 +60,16 @@ for msg in msgs:
     print("=" * 40)
 
 c = Client('test_device_1')
-# m = Message(200, 'dicts/sample.yaml')
-# for i, v in imsg:
-#     m[i] = v
-#
-# b = CDbBuilder('dicts/sample.yaml')
-# msg = b.build(m)
-# raw = bytes("{0:04}".format(len(msg)), 'utf-8') + msg
+m = Message(200, 'example_1')
+for i, v in imsg:
+    m[i] = v
+
+b = CDbBuilder('example_1')
+msg = b.build(m)
+raw = bytes("{0:04}".format(len(msg)), 'utf-8') + msg
 # c.send(raw)
-# print(9, raw)
-# parser = Parser('dicts/sample.yaml')
+print(9, raw)
+# parser = Parser('example_1')
 # _msg = None
 # while True:
 #     if c.tcp_socket():

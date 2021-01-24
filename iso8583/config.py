@@ -1,4 +1,5 @@
 import os
+import sys
 import yaml
 import random
 import string
@@ -62,6 +63,7 @@ class Config(object):
             return
         self.config_name = config
         self.raw_config = yaml.load(open(config))
+        self.name = self.raw_config["Name"]
     
     def gen_id(self, size=6, chars=string.ascii_uppercase + string.digits):
         return "".join(random.choice(chars) for _ in range(size))
@@ -99,7 +101,8 @@ class DictConfig(Config):
             else:
                 self.log.Info("Unexpected field format:", field)
         # self.log.debug(f"Loaded config: {self.fields}")
-        
+
+
 class DeviceConfig(Config):
     def __init__(self, config) -> None:
         super().__init__(config)
@@ -114,3 +117,29 @@ class DeviceConfig(Config):
         self.host = self.raw_config.get("Host", "127.0.0.1")
         self.port = self.raw_config.get("Port", 12345)
         self.log.Debug(f"Config for Device[{self.name}]: Bytes order[{self.order}]; Host[{self.host}]; Port[{self.port}]; cfg={self.config_name}")
+
+
+class ConfigLoader(object):
+    def __init__(self, name, path, tclass=Config):
+        root_path = os.path.dirname(os.path.realpath(sys.argv[0]))
+        configs_path = os.path.join(root_path, path)
+        for root, dirs, files in os.walk(configs_path):
+            for file in files:
+                if file.endswith((".yml", ".yaml")):
+                    config_name = os.path.join(root, file)
+                    config = tclass(config_name)
+                    if config.name == name:
+                        self.__class__ = tclass
+                        self.__dict__.update(config.__dict__)
+                        return
+        raise Exception(f"Can't detect configuration for '{name}'")
+
+
+class DeviceConfigLoader(ConfigLoader):
+    def __init__(self, name):
+        super().__init__(name, "devices", tclass=DeviceConfig)
+
+
+class DictConfigLoader(ConfigLoader):
+    def __init__(self, name):
+        super().__init__(name, "dicts", tclass=DictConfig)
