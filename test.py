@@ -59,28 +59,27 @@ for msg in msgs:
     print("Equal : ", msg == new_msg)
     print("=" * 40)
 
-device_config = DeviceConfig('devices/device1.yaml')
-c = Client(device_config)
-m = Message(200, 'dicts/sample.yaml')
-for i, v in imsg:
-    m[i] = v
-
-b = CDbBuilder('dicts/sample.yaml')
-msg = b.build(m)
-raw = bytes("{0:04}".format(len(msg)), 'utf-8') + msg
-c.send(raw)
-print(9, raw)
-parser = Parser('dicts/sample.yaml')
-_msg = None
-while True:
-    if c.tcp_socket():
-        _msg = c.read_socket()
-        print(0, _msg)
-    if _msg:
-        print(1, _msg[4:])
-        parsed = parser.parse(_msg[4:])
-        print(parsed)
-        break
-
-    else:
-        continue
+c = Client('test_device_1')
+# m = Message(200, 'dicts/sample.yaml')
+# for i, v in imsg:
+#     m[i] = v
+#
+# b = CDbBuilder('dicts/sample.yaml')
+# msg = b.build(m)
+# raw = bytes("{0:04}".format(len(msg)), 'utf-8') + msg
+# c.send(raw)
+# print(9, raw)
+# parser = Parser('dicts/sample.yaml')
+# _msg = None
+# while True:
+#     if c.tcp_socket():
+#         _msg = c.read_socket()
+#         print(0, _msg)
+#     if _msg:
+#         print(1, _msg[4:])
+#         parsed = parser.parse(_msg[4:])
+#         print(parsed)
+#         break
+#
+#     else:
+#         continue

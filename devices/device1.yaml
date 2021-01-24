@@ -1,4 +1,4 @@
-Name: test
+Name: test_device_1
 Header:
   Encoding: C  # [C|B]  Character or Binary encoding
   Format: D    # [D|H]  Decimal or Hex format

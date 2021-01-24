@@ -1,11 +1,13 @@
+import os
 import sys
 import socket
 
 from .logger import Logger
+from .config import DeviceConfig
 from .base import ISO8583  # Temporary
 
 class Client(ISO8583):
-    def __init__(self, config, traffic=False):
+    def __init__(self, device_name, traffic=False):
         self.log = Logger()
         self.__traffic = traffic
         self.socket_closed = True
@@ -13,10 +15,22 @@ class Client(ISO8583):
         self.buffer_size = 2048
         self.broken_pipe_count = 0
         self.max_broken_pipes = 3
-        self.cfg = config
+        self.cfg = self._load_device_config_by_name(device_name)
         self.address = (self.cfg.host, self.cfg.port)
         self.tcp_socket()
-    
+
+    def _load_device_config_by_name(self, name):
+        root_path = os.path.dirname(os.path.realpath(sys.argv[0]))
+        configs_path = os.path.join(root_path, "devices")
+        for root, dirs, files in os.walk(configs_path):
+            for file in files:
+                if file.endswith((".yml", ".yaml")):
+                    device_config_name = os.path.join(root, file)
+                    device_config = DeviceConfig(device_config_name)
+                    if device_config.name == name:
+                        return device_config
+        raise Exception(f"Can't detect configuration for device '{name}'")
+
     def tcp_socket(self):
         if self.socket_closed:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
