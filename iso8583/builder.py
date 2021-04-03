@@ -1,5 +1,7 @@
 from .base import ISO8583
 from .message import Message
+# from .config import DeviceConfig
+
 
 class BaseBuilder(ISO8583):
     def __init__(self, config_name) -> None:
@@ -52,3 +54,11 @@ class CDbBuilder(BaseBuilder):
         for fieldID, smsg in msg:
             data += self._buildField(smsg, rule[fieldID])
         return data
+
+
+class Builder(object):
+    mapper = {
+        'CDb': CDbBuilder
+    }
+    def __init__(self, device):
+        return self.mapper[f"{device.encoding}{device.format}{device.order}"]

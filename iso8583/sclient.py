@@ -6,9 +6,11 @@ from .logger import Logger
 from .config import DeviceConfig
 from .config import DeviceConfigLoader
 from .base import ISO8583  # Temporary
+from .builder import Builder
+
 
 class Client(ISO8583):
-    def __init__(self, device_name, traffic=False):
+    def __init__(self, device_name, dict_name, traffic=False):
         self.log = Logger()
         self.__traffic = traffic
         self.socket_closed = True
@@ -19,6 +21,7 @@ class Client(ISO8583):
         self.cfg = DeviceConfigLoader(device_name)
         self.address = (self.cfg.host, self.cfg.port)
         self.tcp_socket()
+        self.builder = Builder(self.cfg)(dict_name)
 
     def tcp_socket(self):
         if self.socket_closed:
@@ -84,8 +87,10 @@ class Client(ISO8583):
         self.log.Debug(f"Socket read complete: {data}")
         return data
 
-    def send(self, data, count=True) -> bool:
-        self.log.Debug(f"Send message:\n{self.hexdump(data)}")
+    def send(self, msg, count=True) -> bool:
+        self.log.Debug(f"Send message:\n{msg}")
+        data = self.builder.build(msg)
+        self.log.Debug(f"Send message HEX:\n{self.hexdump(data)}")
         try:
             self.sock.send(data)
         except socket.error as e:

@@ -61,15 +61,15 @@ for msg in msgs:
 
 # Client().set_dictionary()
 
-c = Client('test_device_1')
+c = Client('test_device_1', 'example_1')
 m = Message(200)
 for i, v in imsg:
     m[i] = v
 
-b = CDbBuilder('example_1')
-msg = b.build(m)
-raw = bytes("{0:04}".format(len(msg)), 'utf-8') + msg
-# c.send(raw)
+# b = CDbBuilder('example_1')
+# msg = b.build(m)
+# raw = bytes("{0:04}".format(len(msg)), 'utf-8') + msg
+c.send(raw)
 print(9, raw)
 # parser = Parser('example_1')
 # _msg = None

@@ -24,6 +24,7 @@ class MTI(NamedTuple):
     Type: str
     Length: int
 
+
 class SField(object):
     def __init__(self, data) -> None:
         self._fields = {}
@@ -55,6 +56,7 @@ class Fields(object):
     def __getitem__(self, key):
         return self._fields.get(key)
 
+
 class Config(object):
     def __init__(self, config):
         self.log = Logger()
@@ -67,6 +69,7 @@ class Config(object):
     
     def gen_id(self, size=6, chars=string.ascii_uppercase + string.digits):
         return "".join(random.choice(chars) for _ in range(size))
+
 
 class DictConfig(Config):
 
@@ -113,6 +116,8 @@ class DeviceConfig(Config):
         self.name = self.raw_config.get("Name", self.gen_id())
         self.socket["TCP_NO_DELAY"] = self.raw_config.get("Socket", self.socket).get("TCP_NO_DELAY")
         self.socket["SO_REUSEADDR"] = self.raw_config.get("Socket", self.socket).get("SO_REUSEADDR")
+        self.encoding = self.raw_config["Header"].get("Encoding", "C")
+        self.format = self.raw_config["Header"].get("Format", "D")
         self.order = self.raw_config["Header"].get("ByteOrder", "b")
         self.host = self.raw_config.get("Host", "127.0.0.1")
         self.port = self.raw_config.get("Port", 12345)
