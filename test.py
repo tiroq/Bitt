@@ -59,8 +59,10 @@ for msg in msgs:
     print("Equal : ", msg == new_msg)
     print("=" * 40)
 
+# Client().set_dictionary()
+
 c = Client('test_device_1')
-m = Message(200, 'example_1')
+m = Message(200)
 for i, v in imsg:
     m[i] = v
 
