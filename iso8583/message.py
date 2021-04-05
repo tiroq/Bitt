@@ -6,7 +6,12 @@ class Message(object):
     # def __init__(self, mti, config_name):
     lead_mti_chars = {
         "1987": "0",
-        "1993": "1"
+        "1993": "1",
+        "2003": "2",
+        "Error": "9",
+        "error": "9",
+        "Err": "9",
+        "err": "9"
     }
     def __init__(self, mti=200, version="1987"):
         self.log = Logger()
