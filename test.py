@@ -85,3 +85,5 @@ print(9, raw)
 #
 #     else:
 #         continue
+
+# TODO: GUI https://github.com/adelbs/ISO8583 ???

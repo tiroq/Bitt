@@ -44,7 +44,7 @@ class Message(object):
     def mti(self, mti):
         if isinstance(mti, str):
             if len(mti) == 4:
-                self._mti =
+                self._mti = mti
                 return
             elif len(mti) == 3:
                 self._mti = f"{self.lead_mti_char}{mti}"
