@@ -46,7 +46,7 @@ class CDbBuilder(BaseBuilder):
         }[rule.LenType](data, rule)
         _length = int(length) if length else rule.MaxLen
         data = bytes(length + data.ljust(_length)[:_length], 'utf-8')
-        self.log.Debug(f"Field[{rule.FieldID}] Length[{_length}]:\n{self.hexdump(data)}")
+        self.log.Debug(f"FieldID[{rule.FieldID}] Length[{_length}]:\n{self.hexdump(data)}")
         return data
     
     def __buildSField(self, msg, rule) -> bytes:
