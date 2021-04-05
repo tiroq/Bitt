@@ -4,8 +4,13 @@ from .logger import Logger
 
 class Message(object):
     # def __init__(self, mti, config_name):
-    def __init__(self, mti=200):
+    lead_mti_chars = {
+        "1987": "0",
+        "1993": "1"
+    }
+    def __init__(self, mti=200, version="1987"):
         self.log = Logger()
+        self.lead_mti_char = self.lead_mti_chars.get(version, "0")
         # set mti via setter
         self.mti = mti
         self._bitmap = []
@@ -33,11 +38,16 @@ class Message(object):
     @mti.setter
     def mti(self, mti):
         if isinstance(mti, str):
-            self._mti = mti
+            if len(mti) == 4:
+                self._mti =
+                return
+            elif len(mti) == 3:
+                self._mti = f"{self.lead_mti_char}{mti}"
+                return
         elif isinstance(mti, int):
-            self._mti = f"{mti:04}"
-        else:
-            raise Exception(f"Unexpected MTI = {mti}, type={type(mti)}")
+            self._mti = f"{self.lead_mti_char}{mti:03}"
+            return
+        raise Exception(f"Unexpected MTI = {mti}, type={type(mti)}")
     
     def __setitem__(self, field_id, value):
         self.log.Debug(f"Adding field {field_id} = [{value}]")
