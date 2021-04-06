@@ -2,7 +2,7 @@
 from iso8583.config import DeviceConfig
 from iso8583.builder import CDbBuilder
 from iso8583.message import Message
-from iso8583.sclient import Client
+from iso8583.service import Client
 from iso8583.parser import Parser
 
 from datetime import datetime
@@ -75,7 +75,7 @@ print(9, raw)
 # _msg = None
 # while True:
 #     if c.tcp_socket():
-#         _msg = c.read_socket()
+#         _msg = c.recv()
 #         print(0, _msg)
 #     if _msg:
 #         print(1, _msg[4:])

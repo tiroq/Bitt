@@ -22,10 +22,10 @@ class ISO8583(object):
 
     def hexdump(self, p: bytes) -> str:
         output = []
-        l = len(p)
+        data_length = len(p)
         i = 0
-        while i < l:
-            output.append('{:04d}   '.format(i))
+        while i < data_length:
+            output.append('\t{:04d}   '.format(i))
             for j in range(16):
                 if (i + j) < l:
                     byte = p[i + j]
