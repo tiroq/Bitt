@@ -33,7 +33,7 @@ class Message(object):
         if max(bitmap) > 63:
             bitmap = [1] + self._bitmap
             length = 127
-        b = ''.join(['1' if i + 1 in bitmap else '0'for i in range(length)])
+        b = ''.join(['1' if i + 1 in bitmap else '0' for i in range(length)])
         return bytes(int(b[i:i + 8], 2) for i in range(0, len(b), 8))
 
     @property

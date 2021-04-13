@@ -87,3 +87,21 @@ print(9, raw)
 #         continue
 
 # TODO: GUI https://github.com/adelbs/ISO8583 ???
+# TODO: Research:
+# - https://github.com/moov-io/iso8583
+# - https://github.com/tilln/jmeter-iso8583
+# - https://github.com/knovichikhin/pyiso8583/blob/master/iso8583/encoder.py
+# - https://github.com/mchinchilla/StressTestISO8583Server
+# - https://github.com/mahyaresteki/Horizon/blob/master/Source/controllers/services/IsoService.py
+# - https://github.com/arthurhenrique/iso-8583/tree/master/Pyso8583
+# - https://github.com/arthurhenrique/iso-8583/blob/master/Pyso8583/parser_tlv.py
+# - https://github.com/danil/iso8583
+# - https://github.com/timgabets/pythales
+# - https://github.com/timgabets/pyatm
+# - https://github.com/timgabets/pybank
+# tlv:
+# - https://github.com/russss/python-emv/blob/main/emv/protocol/structures.py
+# - https://stackoverflow.com/questions/49205117/looking-to-parse-emv-data-into-tlv
+# socket server:
+# - https://gist.github.com/lkraider/abd24f224751a6edc5c5
+# - https://gist.github.com/gruzovator/edef1011b6886615c01a
